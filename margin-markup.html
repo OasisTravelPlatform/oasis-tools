@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Easy Margin to Markup Conversion Tool</title>
 <style>
-  :root{ --maxw: 900px; --field-w: 240px; }
+  :root{ --maxw: 900px; --field-w: 200px; } /* adjust --field-w to taste */
   html,body{ margin:0; padding:0; background:#fff; color:#0f172a;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
   #wrap{ box-sizing:border-box; width:100%; max-width:var(--maxw); margin:0 auto; padding:16px;
@@ -15,30 +15,29 @@
   h2{ margin:0; font-size:18px; font-weight:700;}
   p.hint{ margin:6px 0 0 0; font-size:13px; color:#475569;}
 
-  /* fields row: fixed width inputs, centered */
+  /* fields: fixed width, centered, side-by-side */
   .row{
-    display:grid; grid-auto-flow:column; grid-auto-columns:max-content; gap:16px;
-    justify-content:center; align-items:end; margin:12px 0;
+    display:grid; grid-auto-flow:column; grid-auto-columns:max-content;
+    gap:20px; justify-content:center; align-items:end; margin:12px 0 8px 0;
   }
   .field{ width:var(--field-w); }
-  label{ display:block; font-size:13px; font-weight:600; margin-bottom:4px; }
+  label{ display:block; font-size:13px; font-weight:600; margin-bottom:4px; text-align:left;}
   input{
     width:100%; box-sizing:border-box; padding:8px 10px; font-size:14px; text-align:center;
     border:1px solid #cbd5e1; border-radius:6px;
   }
 
-  /* actions: buttons then rounding on one centered line */
+  /* actions: buttons centered, rounding to the right on same line */
   .actions{
     display:flex; justify-content:center; align-items:center; gap:10px; margin-top:2px; flex-wrap:wrap;
   }
   button{ padding:8px 14px; border-radius:6px; font-size:14px; cursor:pointer; }
-  #convertBtn{ border:1px solid #0ea5e9; background:#0ea5e9; color:#fff; }
-  #clearBtn{ border:1px solid #cbd5e1; background:#fff; color:#0f172a; }
+  #convertBtn{ border:1px solid #0ea5e9; background:#0ea5e9; color:#fff;}
+  #clearBtn{ border:1px solid #cbd5e1; background:#fff; color:#0f172a;}
   .rounding{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:#475569; }
   select{ padding:6px 8px; border:1px solid #cbd5e1; border-radius:6px; }
 
   #status{ text-align:center; font-size:12px; color:#64748b; min-height:16px; margin-top:8px; }
-  .mini{ text-align:center; font-size:12px; color:#475569; margin-top:6px; line-height:1.3; }
 
   @media (max-width:560px){
     .row{ grid-auto-flow:row; }
@@ -49,7 +48,7 @@
   <div id="wrap">
     <div class="hdr">
       <h2>Easy Margin to Markup Conversion Tool</h2>
-      <p class="hint">Type 25 or 0.25. Example, a 25 percent margin converts to a 33.3 percent markup when using 1-decimal rounding.</p>
+      <p class="hint">Type 25 or 0.25. Example, with 1-decimal rounding, 25% margin = 33.3% markup.</p>
     </div>
 
     <div class="row">
@@ -77,7 +76,6 @@
     </div>
 
     <div id="status" role="status" aria-live="polite"></div>
-    <div class="mini">Markup = Margin ÷ (1 − Margin) • Margin = Markup ÷ (1 + Markup)</div>
   </div>
 
 <script>
