@@ -13,23 +13,24 @@
   .hdr{ text-align:center; margin-bottom:8px;}
   h2{ margin:0; font-size:18px; font-weight:700;}
   p.hint{ margin:6px 0 0 0; font-size:13px; color:#475569;}
-  .tool{ display:grid; grid-template-columns: 1.2fr .8fr; gap:20px; align-items:start;}
-  .left{ display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+
+  /* layout */
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:end; }
   label{ display:block; font-size:13px; font-weight:600; margin-bottom:4px;}
   input{
     width:100%; box-sizing:border-box; padding:8px 10px; font-size:14px;
     border:1px solid #cbd5e1; border-radius:6px; text-align:center;
   }
-  .right{ display:flex; flex-direction:column; gap:8px; align-items:flex-start;}
-  .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .actions{ display:flex; justify-content:center; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap; }
   button{ padding:8px 12px; border-radius:6px; font-size:14px; cursor:pointer; }
   #convertBtn{ border:1px solid #0ea5e9; background:#0ea5e9; color:#fff;}
   #clearBtn{ border:1px solid #cbd5e1; background:#fff; color:#0f172a;}
-  #status{ font-size:12px; color:#64748b; min-height:16px;}
-  .mini{ font-size:12px; color:#475569; line-height:1.3;}
-  .rounding{ display:flex; align-items:center; gap:8px; font-size:12px; color:#475569; }
+  .rounding{ display:flex; align-items:center; gap:6px; font-size:12px; color:#475569; }
   select{ padding:6px 8px; border:1px solid #cbd5e1; border-radius:6px; }
-  @media (max-width: 720px){ .tool{ grid-template-columns:1fr; } .right{ align-items:center; } }
+  #status{ text-align:center; font-size:12px; color:#64748b; min-height:16px; margin-top:6px; }
+
+  /* mobile fallback */
+  @media (max-width:720px){ .row{ grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -39,98 +40,85 @@
       <p class="hint">Type 25 or 0.25. Example, a 25 percent margin converts to a 33.3 percent markup when using 1-decimal rounding.</p>
     </div>
 
-    <div class="tool">
-      <div class="left">
-        <div>
-          <label for="margin">Margin %</label>
-          <input id="margin" type="text" inputmode="decimal" placeholder="e.g., 25 or 0.25">
-        </div>
-        <div>
-          <label for="markup">Markup %</label>
-          <input id="markup" type="text" inputmode="decimal" placeholder="e.g., 33.3 or 0.333">
-        </div>
+    <div class="row">
+      <div>
+        <label for="margin">Margin %</label>
+        <input id="margin" type="text" inputmode="decimal" placeholder="e.g., 25 or 0.25">
       </div>
+      <div>
+        <label for="markup">Markup %</label>
+        <input id="markup" type="text" inputmode="decimal" placeholder="e.g., 33.3 or 0.333">
+      </div>
+    </div>
 
-      <div class="right">
-        <div class="actions">
-          <button id="convertBtn">Convert</button>
-          <button id="clearBtn">Clear</button>
-          <div class="rounding">
-            <span>Rounding:</span>
-            <select id="roundMode">
-              <option value="whole" selected>Whole</option>
-              <option value="1">1 decimal</option>
-              <option value="2">2 decimals</option>
-            </select>
-          </div>
-        </div>
-        <div id="status" role="status" aria-live="polite"></div>
-        <div class="mini">
-          Markup = Margin ÷ (1 − Margin)<br>
-          Margin = Markup ÷ (1 + Markup)
-        </div>
+    <div class="actions">
+      <button id="convertBtn">Convert</button>
+      <button id="clearBtn">Clear</button>
+      <div class="rounding">
+        <span>Rounding:</span>
+        <select id="roundMode">
+          <option value="whole" selected>Whole</option>
+          <option value="1">1 decimal</option>
+          <option value="2">2 decimals</option>
+        </select>
       </div>
+    </div>
+
+    <div id="status" role="status" aria-live="polite">Converted margin to markup.</div>
+
+    <div style="text-align:center; font-size:12px; color:#475569;">
+      Markup = Margin ÷ (1 − Margin) &nbsp;•&nbsp; Margin = Markup ÷ (1 + Markup)
     </div>
   </div>
 
 <script>
 (function(){
-  const mEl=document.getElementById('margin');
-  const uEl=document.getElementById('markup');
-  const sEl=document.getElementById('status');
-  const modeEl=document.getElementById('roundMode');
+  const mEl = document.getElementById('margin');
+  const uEl = document.getElementById('markup');
+  const sEl = document.getElementById('status');
+  const modeEl = document.getElementById('roundMode');
 
   function parsePct(v){
     if(!v) return null;
-    const t=String(v).trim().replace('%','');
+    const t = String(v).trim().replace('%','');
     if(t==='') return null;
-    const n=Number(t);
+    const n = Number(t);
     if(!isFinite(n)) return NaN;
-    return n>1 ? n/100 : n; // accepts 25 or 0.25
-  }
-
-  function roundPct(value){
-    const mode=modeEl.value;
-    if(mode==='whole'){
-      return Math.round(value*100)/100; // we will format later as integer
-    }
-    const places = Number(mode);
-    const factor = Math.pow(10, places+2); // percent scale then rounding
-    return Math.round(value*100* Math.pow(10,places))/Math.pow(10,places)/100;
+    return n > 1 ? n/100 : n; // accepts 25 or 0.25
   }
 
   function formatPct(value){
-    const mode=modeEl.value;
-    const pct=value*100;
-    if(mode==='whole') return Math.round(pct) + '%';
-    const places=Number(mode);
-    const s = pct.toFixed(places);
-    return s + '%';
+    const pct = value * 100;
+    const mode = modeEl.value;
+    if(mode === 'whole') return Math.round(pct) + '%';
+    const places = Number(mode);
+    return pct.toFixed(places) + '%';
   }
 
   function convert(){
-    sEl.textContent='';
-    const mArg=mEl.value||'', uArg=uEl.value||'';
-    const hasM=mArg.trim()!=='', hasU=uArg.trim()!=='';
+    sEl.textContent = '';
+    const mArg = mEl.value || '';
+    const uArg = uEl.value || '';
+    const hasM = mArg.trim() !== '';
+    const hasU = uArg.trim() !== '';
     if(hasM && hasU){ sEl.textContent='Fill only one field before converting.'; return; }
     if(!hasM && !hasU){ sEl.textContent='Enter Margin or Markup, then Convert.'; return; }
 
     if(hasM){
-      const m=parsePct(mArg);
-      if(isNaN(m)||m<0||m>=1){ sEl.textContent='Margin must be 0 to less than 100.'; return; }
-      const markup = m/(1-m);
-      const rounded = roundPct(markup);
-      uEl.value = formatPct(rounded);
-      sEl.textContent='Converted margin to markup.';
+      const m = parsePct(mArg);
+      if(isNaN(m) || m < 0 || m >= 1){ sEl.textContent='Margin must be 0 to less than 100.'; return; }
+      const markup = m / (1 - m);
+      uEl.value = formatPct(markup);
+      sEl.textContent = 'Converted margin to markup.';
       return;
     }
-    const u=parsePct(uArg);
-    if(isNaN(u)||u<0){ sEl.textContent='Markup must be zero or more.'; return; }
-    const margin=u/(1+u);
-    if(margin>=1){ sEl.textContent='Margin result is 100 percent or more. Check input.'; return; }
-    const rounded = roundPct(margin);
-    mEl.value = formatPct(rounded);
-    sEl.textContent='Converted markup to margin.';
+
+    const u = parsePct(uArg);
+    if(isNaN(u) || u < 0){ sEl.textContent='Markup must be zero or more.'; return; }
+    const margin = u / (1 + u);
+    if(margin >= 1){ sEl.textContent='Margin result is 100 percent or more. Check input.'; return; }
+    mEl.value = formatPct(margin);
+    sEl.textContent = 'Converted markup to margin.';
   }
 
   function clearAll(){ mEl.value=''; uEl.value=''; sEl.textContent=''; }
