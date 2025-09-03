@@ -1,108 +1,76 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Easy Margin to Markup Conversion Tool</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: #f8fafc;
-      color: #0f172a;
-      padding: 20px;
-    }
-    #box {
-      box-sizing: border-box;
-      width: 100%;
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 20px;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      background: #ffffff;
-    }
-    h2 {
-      margin: 0 0 12px 0;
-      font-size: 20px;
-      font-weight: 700;
-    }
-    p {
-      margin: 0 0 16px 0;
-      font-size: 13px;
-      color: #475569;
-    }
-    label {
-      font-weight: 600;
-      font-size: 14px;
-      display: block;
-      margin-top: 12px;
-    }
-    input {
-      display: block;
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 14px;
-      margin-top: 6px;
-    }
-    button {
-      margin-top: 16px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    #convertBtn {
-      border: 1px solid #0ea5e9;
-      background: #0ea5e9;
-      color: white;
-    }
-    #clearBtn {
-      border: 1px solid #cbd5e1;
-      background: #ffffff;
-      color: #0f172a;
-      margin-left: 8px;
-    }
-    #statusMsg {
-      margin-top: 12px;
-      font-size: 13px;
-      color: #64748b;
-    }
-    details {
-      margin-top: 18px;
-      font-size: 13px;
-      color: #475569;
-    }
-    summary {
-      cursor: pointer;
-      color: #0ea5e9;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Easy Margin to Markup Conversion Tool</title>
+<style>
+  :root{
+    --card-w: 520px;   /* overall width */
+    --field-w: 280px;  /* input width */
+  }
+  body{
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background:#fff; color:#0f172a; margin:0; padding:12px;
+  }
+  #box{
+    box-sizing:border-box;
+    width:100%; max-width:var(--card-w);
+    margin:0 auto; padding:14px 16px;
+    border:1px solid #e2e8f0; border-radius:12px; background:#ffffff;
+  }
+  h2{ margin:0 0 8px 0; font-size:18px; font-weight:700; text-align:center; }
+  p.help{ margin:0 0 10px 0; font-size:12px; color:#475569; text-align:center; }
+
+  .field-wrap{ width:var(--field-w); margin:8px auto 0 auto; }
+  label{ display:block; font-weight:600; font-size:13px; margin-bottom:4px; }
+  input{
+    width:100%; padding:8px 10px; font-size:14px;
+    border:1px solid #cbd5e1; border-radius:8px;
+  }
+
+  .actions{ width:var(--field-w); margin:10px auto 0 auto; display:flex; gap:8px; }
+  button{
+    padding:8px 12px; border-radius:8px; font-size:14px; cursor:pointer;
+    line-height:1;
+  }
+  #convertBtn{ border:1px solid #0ea5e9; background:#0ea5e9; color:#fff; }
+  #clearBtn{ border:1px solid #cbd5e1; background:#fff; color:#0f172a; }
+
+  #statusMsg{ width:var(--field-w); margin:8px auto 0 auto; font-size:12px; color:#64748b; }
+  hr{ margin:10px 0; border:none; border-top:1px solid #e2e8f0; }
+  details{ width:var(--field-w); margin:6px auto 0 auto; font-size:12px; color:#475569; }
+  summary{ cursor:pointer; color:#0ea5e9; }
+</style>
 </head>
 <body>
   <div id="box">
     <h2>Easy Margin to Markup Conversion Tool</h2>
-    <p>Enter a value in either field, then click Convert. You can enter 22 or 0.22. Results are shown as percentages.</p>
+    <p class="help">Enter a value in either field, then click Convert. You can enter 22 or 0.22.</p>
 
-    <label for="marginInput">Margin %</label>
-    <input id="marginInput" type="text" inputmode="decimal" placeholder="e.g., 22 or 0.22">
+    <div class="field-wrap">
+      <label for="marginInput">Margin %</label>
+      <input id="marginInput" type="text" inputmode="decimal" placeholder="e.g., 22 or 0.22">
+    </div>
 
-    <label for="markupInput">Markup %</label>
-    <input id="markupInput" type="text" inputmode="decimal" placeholder="e.g., 28.2 or 0.282">
+    <div class="field-wrap">
+      <label for="markupInput">Markup %</label>
+      <input id="markupInput" type="text" inputmode="decimal" placeholder="e.g., 28.2 or 0.282">
+    </div>
 
-    <button id="convertBtn">Convert</button>
-    <button id="clearBtn">Clear</button>
+    <div class="actions">
+      <button id="convertBtn">Convert</button>
+      <button id="clearBtn">Clear</button>
+    </div>
 
     <div id="statusMsg" role="status" aria-live="polite"></div>
 
     <hr>
     <details>
       <summary>How this works</summary>
-      <div>
+      <div style="margin-top:6px; line-height:1.4;">
         <div>Markup = Margin ÷ (1 − Margin)</div>
         <div>Margin = Markup ÷ (1 + Markup)</div>
-        <div style="margin-top:6px;">Enter values as 22 or 0.22. The tool accepts both.</div>
       </div>
     </details>
   </div>
@@ -112,77 +80,47 @@
       const marginEl = document.getElementById('marginInput');
       const markupEl = document.getElementById('markupInput');
       const statusEl = document.getElementById('statusMsg');
-      const convertBtn = document.getElementById('convertBtn');
-      const clearBtn = document.getElementById('clearBtn');
 
-      function parsePercent(val) {
-        if (val == null) return null;
-        const s = String(val).trim().replace('%', '');
-        if (s === '') return null;
-        const num = Number(s);
-        if (!isFinite(num)) return NaN;
-        return num > 1 ? num / 100 : num; // accepts 22 or 0.22
+      function parsePercent(val){
+        if(val==null) return null;
+        const s = String(val).trim().replace('%','');
+        if(s==='') return null;
+        const n = Number(s);
+        if(!isFinite(n)) return NaN;
+        return n > 1 ? n/100 : n; // accepts 22 or 0.22
       }
-
-      function formatPercent(val) {
-        let out = (val * 100).toFixed(2);
-        if (out.endsWith('.00')) out = out.slice(0, -3);
+      function formatPercent(v){
+        let out = (v*100).toFixed(2);
+        if(out.endsWith('.00')) out = out.slice(0,-3);
         return out + '%';
       }
-
-      function convert() {
+      function convert(){
         statusEl.textContent = '';
         const mArg = marginEl.value || '';
         const uArg = markupEl.value || '';
-        const hasMargin = mArg.trim() !== '';
-        const hasMarkup = uArg.trim() !== '';
+        const hasM = mArg.trim() !== '';
+        const hasU = uArg.trim() !== '';
+        if(hasM && hasU){ statusEl.textContent='Please fill only one field before converting.'; return; }
+        if(!hasM && !hasU){ statusEl.textContent='Enter a value in either Margin or Markup, then click Convert.'; return; }
 
-        if (hasMargin && hasMarkup) {
-          statusEl.textContent = 'Please fill only one field before converting.';
-          return;
-        }
-        if (!hasMargin && !hasMarkup) {
-          statusEl.textContent = 'Enter a value in either Margin or Markup, then click Convert.';
-          return;
-        }
-
-        if (hasMargin) {
+        if(hasM){
           const m = parsePercent(mArg);
-          if (isNaN(m) || m < 0 || m >= 1) {
-            statusEl.textContent = 'Margin must be a number between 0 and 100, and less than 100.';
-            return;
-          }
-          const markup = m / (1 - m);
-          markupEl.value = formatPercent(markup);
+          if(isNaN(m) || m < 0 || m >= 1){ statusEl.textContent='Margin must be between 0 and 100.'; return; }
+          markupEl.value = formatPercent(m/(1-m));
           statusEl.textContent = 'Converted margin to markup.';
           return;
         }
-
-        if (hasMarkup) {
-          const u = parsePercent(uArg);
-          if (isNaN(u) || u < 0) {
-            statusEl.textContent = 'Markup must be a number that is zero or more.';
-            return;
-          }
-          const margin = u / (1 + u);
-          if (margin >= 1) {
-            statusEl.textContent = 'The resulting margin is 100 percent or more. Please check your input.';
-            return;
-          }
-          marginEl.value = formatPercent(margin);
-          statusEl.textContent = 'Converted markup to margin.';
-          return;
-        }
+        const u = parsePercent(uArg);
+        if(isNaN(u) || u < 0){ statusEl.textContent='Markup must be zero or more.'; return; }
+        const margin = u/(1+u);
+        if(margin >= 1){ statusEl.textContent='The resulting margin is 100 percent or more.'; return; }
+        marginEl.value = formatPercent(margin);
+        statusEl.textContent = 'Converted markup to margin.';
       }
+      function clearAll(){ marginEl.value=''; markupEl.value=''; statusEl.textContent=''; }
 
-      function clearAll() {
-        marginEl.value = '';
-        markupEl.value = '';
-        statusEl.textContent = '';
-      }
-
-      convertBtn.addEventListener('click', convert);
-      clearBtn.addEventListener('click', clearAll);
+      document.getElementById('convertBtn').addEventListener('click', convert);
+      document.getElementById('clearBtn').addEventListener('click', clearAll);
     })();
   </script>
 </body>
